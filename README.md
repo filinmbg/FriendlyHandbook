@@ -1,2 +1,3 @@
-# MrHelper
+#FriendlyHandbook
+
 Team project
