@@ -72,5 +72,5 @@ pip install -i https://test.pypi.org/simple/ goit-team_project-FriendlyHandbook=
 ## Наша команда
 
 - Team Lead: Олександр Юха
-- Scrum Master: Олександр Куспіс
+- Scrum Master: Олександр Куспис
 - Python Developers: Іван Марковський, Олександр Кострицький, Олександр Коваленко
