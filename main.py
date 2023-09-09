@@ -1,7 +1,8 @@
 from pathlib import Path
 import sort_folder
-import phone_book
-import note_book
+
+# import phone_book
+# import note_book
 
 
 def run_folder():
@@ -10,9 +11,9 @@ def run_folder():
 
 
 bot_command_dict = {
-    "1": phone_book,
-    "2": note_book,
-    "3": run_folder(),
+    # "1": phone_book,
+    # "2": note_book,
+    "3": run_folder,
 }
 
 
@@ -32,7 +33,7 @@ def assistant_bot():
         command = input("Введіть номер опції (від 0 до 3): ").strip()
 
         if command == "0":
-            raise SystemExit("\nДопобачення!\n")
+            raise SystemExit("\nДо побачення!\n")
 
         elif command in bot_command_dict.keys():
             handler = bot_command_dict[command]
