@@ -1,116 +1,172 @@
 from collections import UserDict
+import pickle
+import os
 
-class Field:
+SAVE_FILENAME = "notebook.pkl" # Ім'я файлу для запису данних
+
+class Field_NOTEBOOK:
     def __init__(self, value):
         self.value = value
 
-class Phone(Field):
+class Tag(Field_NOTEBOOK):
     def __eq__(self, other):
-        return isinstance(other, Phone) and self.value == other.value
+        return isinstance(other, Tag) and self.value == other.value
 
-class Name(Field):
+class Name(Field_NOTEBOOK):
     pass
 
 class Record:
-    def __init__(self, name: Name, phones: list, emails: list):
+    def __init__(self, name: Name, tags: list, text: str):  
         self.name = name
-        self.phones = [Phone(phone) for phone in phones]
-        self.emails = emails
+        self.tags = [Tag(tag) for tag in tags]
+        self.text = text  
 
-    def add_phone(self, phone):
-        phone_number = Phone(phone)
-        if phone_number not in self.phones:
-            self.phones.append(phone_number)
+    def add_tag(self, tag): 
+        hashtag = Tag(tag)
+        if hashtag not in self.tags:
+            self.tags.append(hashtag)
 
-    def find_phone(self, value):
-        for phone in self.phones:
-            if phone.value == value:
-                return phone
+    def find_tag(self, value):
+        for tag in self.tags:
+            if tag.value == value:
+                return tag
         return None
 
-    def delete_phone(self, phone):
-        if phone in self.phones:
-            self.phones.remove(phone)
+    def delete_tag(self, tag):
+        if tag in self.tags:
+            self.tags.remove(tag)
 
-    def edit_phone(self, old_phone, new_phone):
-        index = self.phones.index(old_phone)
-        self.phones[index] = Phone(new_phone)
+    def edit_text(self, new_text): 
+        self.text = new_text
 
-class AddressBook(UserDict):
+class Notebook(UserDict):
     def add_record(self, record: Record):
         self.data[record.name.value] = record
+
+    def save_to_file(self): # збереження файлу
+        with open(SAVE_FILENAME, 'wb') as file:
+            pickle.dump(self.data, file)  
+
+    def load_from_file(self): # завантаження файлу
+        if os.path.exists(SAVE_FILENAME):
+            try:
+                with open(SAVE_FILENAME, 'rb') as file:
+                    self.data = pickle.load(file)  
+            except FileNotFoundError:
+                print(f"Файл '{SAVE_FILENAME}' не знайдений.")
+        else:
+            # Не видаляти дані, якщо файл не існує
+            print(f"Файл '{SAVE_FILENAME}' не існує. Дані не завантажено.")
 
     def find_record(self, value):
         return self.data.get(value)
 
-    def edit_record(self, name, new_phones, new_emails):
+    def edit_record(self, name, new_tags, new_text): 
         if name in self.data:
             record = self.data[name]
-            record.phones = [Phone(phone) for phone in new_phones]
-            record.emails = new_emails
+            record.tags = [Tag(tag) for tag in new_tags]
+            record.text = new_text  
             self.data[name] = record
-            print(f"Contact {name} edited successfully.")
+            print(f"Нотатка {name} була змінена.")
         else:
-            print(f"Contact with Name '{name}' not found.")
+            print(f"Нотатка '{name}' не знайдена.")
+
+    def search_by_tag(self, tag):
+        matching_records = []
+        for record in self.data.values():
+            if any(tag == t.value for t in record.tags):
+                matching_records.append(record)
+        return matching_records
 
 def main():
-    address_book = AddressBook()
+    note_book = Notebook()
+    note_book.load_from_file()
 
     while True:
         print("\nOptions:")
-        print("1. Add Contact")
-        print("2. Find Contact")
-        print("3. Edit Contact")
-        print("4. Delete Contact")
-        print("5. Exit")
+        print("1. Додати нотатку")
+        print("2. Знайти нотатку")
+        print("3. Редагувати нотатку")
+        print("4. Видалити нотатку")
+        print("5. Пошук за тегами")
+        print("6. Вивести всі нотатки") 
+        print("7. Вихід з записника")
 
-        choice = input("Select an option: ")
+        choice = input("Виберіть опцію: ")
 
         if choice == "1":
-            name = input("Enter Name: ")
-            phone_numbers = input("Enter Phone Numbers (Якщо кілька, то вказати через кому): ").split(',')
-            emails = input("Enter Emails (Якщо кілька, то вказати через кому): ").split(',')
+            name = input("Вкажіть ім'я нотатки: ")
+            hashtags = input("Вкажіть теги нотатки (Якщо кілька, то вказати через кому без пробілу): ").split(',')
+            text = input("Введіть текст нотатки: ")  
 
             name_field = Name(name.strip())
-            record = Record(name_field, phone_numbers, emails)
-            address_book.add_record(record)
-            print(f"Contact {name} added to the address book.")
+            record = Record(name_field, hashtags, text)  
+            note_book.add_record(record)
+            print(f"Нотатка {name} добавлена до записника.")
 
         elif choice == "2":
-            search_term = input("Enter Name to search for: ")
-            record = address_book.find_record(search_term)
+            search_term = input("Вкажіть ім'я нотатки для пошук: ")
+            record = note_book.find_record(search_term)
             if record:
                 print(f"Name: {record.name.value}")
-                print("Phone Numbers:")
-                for phone in record.phones:
-                    print(phone.value)
-                print("Emails:")
-                for email in record.emails:
-                    print(email)
+                print("Tags:")
+                for tag in record.tags:
+                    print(tag.value)
+                print("Text:")
+                print(record.text)  
             else:
-                print(f"Contact with Name '{search_term}' not found.")
+                print(f"Нотатку з ім'ям '{search_term}' не було знайдено.")
 
         elif choice == "3":
-            edit_name = input("Enter Name to edit: ")
-            new_phone_numbers = input("Enter New Phone Numbers (Якщо кілька, то вказати через кому): ").split(',')
-            new_emails = input("Enter New Emails (Якщо кілька, то вказати через кому): ").split(',')
-            address_book.edit_record(edit_name.strip(), new_phone_numbers, new_emails)
+            edit_name = input("Вкажіть ім'я нотатки для редагування: ")
+            new_tags = input("Вкажіть нові теги (Якщо кілька, то вказати через кому): ").split(',')
+            new_text = input("Введіть новий текст: ") 
+            note_book.edit_record(edit_name.strip(), new_tags, new_text)
 
         elif choice == "4":
-            delete_term = input("Enter Name to delete: ")
-            record = address_book.find_record(delete_term)
+            delete_term = input("Вкажіть ім'я нотатки для видалення: ")
+            record = note_book.find_record(delete_term)
             if record:
-                del address_book.data[delete_term]
-                print(f"Contact {delete_term} deleted from the address book.")
+                del note_book.data[delete_term]
+                print(f"Нотатка {delete_term} була видалена з записника.")
             else:
-                print(f"Contact with Name '{delete_term}' not found.")
+                print(f"Нотатку з ім'ям '{delete_term}' не було знайдено.")
 
         elif choice == "5":
-            print("Goodbye!")
+            tag_to_search = input("Введіть тег для пошуку: ")
+            matching_records = note_book.search_by_tag(tag_to_search)
+            if matching_records:
+                print("Matching Records:")
+                for record in matching_records:
+                    print(f"Name: {record.name.value}")
+                    print("Tags:")
+                    for tag in record.tags:
+                        print(tag.value)
+                    print("Text:")
+                    print(record.text)
+            else:
+                print(f"Нотаток з тегом '{tag_to_search}' не знайдено.")
+
+        elif choice == "6": # Виведення всіх нотаток
+            print("Список всіх нотаток:")
+            for name, record in note_book.data.items():
+                print(f"Name: {record.name.value}")
+                print("Tags:")
+                for tag in record.tags:
+                    print(tag.value)
+                print("Text:")
+                print(record.text)
+
+        elif choice == "7":
+            # Зберегти дані перед виходом з програми
+            note_book.save_to_file()
+            print(f"Дані збережено в файлі '{SAVE_FILENAME}'")
+            print("До побачення!")
             break
 
         else:
-            print("Invalid option. Please select a valid option.")
+            print("Не коректний вибір. Виберіть опцію.")
+
 
 if __name__ == "__main__":
     main()
