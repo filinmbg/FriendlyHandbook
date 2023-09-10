@@ -1,4 +1,6 @@
 from pathlib import Path
+from prompt_toolkit import prompt
+from prompt_tool import Completer, RainbowLexer
 import sort_folder
 
 # import phone_book
@@ -8,6 +10,7 @@ import sort_folder
 def run_folder():
     folder_path = input("Введіть шлях до теки для сортування: ")
     sort_folder.main(Path(folder_path))
+    return ('Сортування завершено успішно')
 
 
 bot_command_dict = {
@@ -30,7 +33,7 @@ def assistant_bot():
     )
 
     while True:
-        command = input("Введіть номер опції (від 0 до 3): ").strip()
+        command = prompt("Введіть номер опції (від 0 до 3): ", completer=Completer, lexer=RainbowLexer()).strip()
 
         if command == "0":
             raise SystemExit("\nДо побачення!\n")
