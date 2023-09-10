@@ -1,6 +1,7 @@
 from collections import UserDict
 import pickle
 import os
+from main import assistant_bot
 
 SAVE_FILENAME = "notebook.pkl" # Ім'я файлу для запису данних
 
@@ -78,33 +79,37 @@ class Notebook(UserDict):
                 matching_records.append(record)
         return matching_records
 
-def main():
+def run_notebook():
     note_book = Notebook()
     note_book.load_from_file()
 
     while True:
         print("\nOptions:")
-        print("1. Додати нотатку")
-        print("2. Знайти нотатку")
-        print("3. Редагувати нотатку")
-        print("4. Видалити нотатку")
-        print("5. Пошук за тегами")
-        print("6. Вивести всі нотатки") 
-        print("7. Вихід з записника")
+        print("1. Додати нотатку           (add note)")
+        print("2. Знайти нотатку за назвою (find note)")
+        print("3. Пошук за тегами          (find by tag)")
+        print("4. Вивести всі нотатки      (show all notes)")
+        print("5. Редагувати нотатку       (change note)")
+        print("6. Редагувати текст нотатки (change text)") 
+        print("7. Редагувати теги нотатки  (change tag)")  
+        print("8. Видалити нотатку         (delete note)")
+        print("9. Додати теги до нотатки   (add tag)") 
+        print("0. Вихід з записника        (close)")
 
         choice = input("Виберіть опцію: ")
 
-        if choice == "1":
+        if choice == "1" or choice == "add note":
             name = input("Вкажіть ім'я нотатки: ")
-            hashtags = input("Вкажіть теги нотатки (Якщо кілька, то вказати через кому без пробілу): ").split(',')
+            hashtags = input("Вкажіть теги нотатки (Якщо кілька, то вказати через кому): ").split(', ')
             text = input("Введіть текст нотатки: ")  
 
             name_field = Name(name.strip())
             record = Record(name_field, hashtags, text)  
             note_book.add_record(record)
             print(f"Нотатка {name} добавлена до записника.")
+            pass
 
-        elif choice == "2":
+        elif choice == "2" or choice == "find note":
             search_term = input("Вкажіть ім'я нотатки для пошук: ")
             record = note_book.find_record(search_term)
             if record:
@@ -116,23 +121,9 @@ def main():
                 print(record.text)  
             else:
                 print(f"Нотатку з ім'ям '{search_term}' не було знайдено.")
+            pass
 
-        elif choice == "3":
-            edit_name = input("Вкажіть ім'я нотатки для редагування: ")
-            new_tags = input("Вкажіть нові теги (Якщо кілька, то вказати через кому): ").split(',')
-            new_text = input("Введіть новий текст: ") 
-            note_book.edit_record(edit_name.strip(), new_tags, new_text)
-
-        elif choice == "4":
-            delete_term = input("Вкажіть ім'я нотатки для видалення: ")
-            record = note_book.find_record(delete_term)
-            if record:
-                del note_book.data[delete_term]
-                print(f"Нотатка {delete_term} була видалена з записника.")
-            else:
-                print(f"Нотатку з ім'ям '{delete_term}' не було знайдено.")
-
-        elif choice == "5":
+        elif choice == "3" or choice == "find by tag":
             tag_to_search = input("Введіть тег для пошуку: ")
             matching_records = note_book.search_by_tag(tag_to_search)
             if matching_records:
@@ -146,8 +137,9 @@ def main():
                     print(record.text)
             else:
                 print(f"Нотаток з тегом '{tag_to_search}' не знайдено.")
+            pass
 
-        elif choice == "6": # Виведення всіх нотаток
+        elif choice == "4" or choice == "show all notes": # Виведення всіх нотаток
             print("Список всіх нотаток:")
             for name, record in note_book.data.items():
                 print(f"Name: {record.name.value}")
@@ -156,17 +148,72 @@ def main():
                     print(tag.value)
                 print("Text:")
                 print(record.text)
+            pass
 
-        elif choice == "7":
+
+        elif choice == "5" or choice == "change note":
+            edit_name = input("Вкажіть ім'я нотатки для редагування: ")
+            new_tags = input("Вкажіть нові теги (Якщо кілька, то вказати через кому): ").split(', ')
+            new_text = input("Введіть новий текст: ") 
+            note_book.edit_record(edit_name.strip(), new_tags, new_text)
+            pass
+
+        elif choice == "6" or choice == "change text":
+            edit_name = input("Вкажіть ім'я нотатки для редагування тексту: ")
+            record = note_book.find_record(edit_name.strip())
+            if record:
+                new_text = input("Введіть новий текст: ")
+                record.edit_text(new_text)
+                print(f"Текст нотатки {edit_name} був змінений.")
+            else:
+                print(f"Нотатку з ім'ям '{edit_name}' не було знайдено.")
+
+        elif choice == "7" or choice == "change tag":
+            edit_tags_name = input("Вкажіть ім'я нотатки для редагування тегів: ")
+            record = note_book.find_record(edit_tags_name.strip())
+            if record:
+                new_tags = input("Вкажіть нові теги для нотатки (Якщо кілька, то вказати через кому): ").split(', ')
+                record.tags = [Tag(tag.strip()) for tag in new_tags]
+                print(f"Теги для нотатки {edit_tags_name} були змінені.")
+            else:
+                print(f"Нотатку з ім'ям '{edit_tags_name}' не було знайдено.")
+
+        elif choice == "8" or choice == "delete note":
+            delete_term = input("Вкажіть ім'я нотатки для видалення: ")
+            record = note_book.find_record(delete_term)
+            if record:
+                del note_book.data[delete_term]
+                print(f"Нотатка {delete_term} була видалена з записника.")
+            else:
+                print(f"Нотатку з ім'ям '{delete_term}' не було знайдено.")
+            pass
+
+        elif choice == "9" or choice == "add tag":
+            edit_tags_name = input("Вкажіть ім'я нотатки, до якої потрібно додати теги: ")
+            record = note_book.find_record(edit_tags_name)
+            if record:
+                new_tags = input("Вкажіть нові теги для нотатки (Якщо кілька, то вказати через кому): ").split(', ')
+                for tag in new_tags:
+                    record.add_tag(tag.strip())
+                print(f"Теги для нотатки {edit_tags_name} були додані.")
+            else:
+                print(f"Нотатку з ім'ям '{edit_tags_name}' не було знайдено.")
+            pass
+
+        elif choice == "0" or choice == "close":
             # Зберегти дані перед виходом з програми
             note_book.save_to_file()
             print(f"Дані збережено в файлі '{SAVE_FILENAME}'")
             print("До побачення!")
+            assistant_bot()
             break
 
         else:
             print("Не коректний вибір. Виберіть опцію.")
 
+        # Завершуємо пункт меню і чекаємо Enter перед поверненням до головного меню.
+        input("Для продовження, натисніть Enter: ")
+
 
 if __name__ == "__main__":
-    main()
+    run_notebook()
