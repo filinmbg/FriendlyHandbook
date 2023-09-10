@@ -1,3 +1,4 @@
+
 # Персональний помічник – Friendly Handbook
 
 ## Опис
@@ -74,3 +75,4 @@ pip install -i https://test.pypi.org/simple/ goit-team_project-FriendlyHandbook=
 - Team Lead: Олександр Юха
 - Scrum Master: Олександр Куспис
 - Python Developers: Іван Марковський, Олександр Кострицький, Олександр Коваленко
+
