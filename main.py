@@ -1,10 +1,11 @@
 from pathlib import Path
+from calculator import calc
 from prompt_toolkit import prompt
 from prompt_tool import Completer, RainbowLexer
 import sort_folder
-
+import note_book
 # import phone_book
-# import note_book
+
 
 
 def run_folder():
@@ -15,8 +16,9 @@ def run_folder():
 
 bot_command_dict = {
     # "1": phone_book,
-    # "2": note_book,
+    "2": note_book,
     "3": run_folder,
+    "4": calc
 }
 
 
@@ -28,12 +30,13 @@ def assistant_bot():
     - Книга контактів (PhoneBook) -> Натисніть '1'
     - Нотатки (NoteBook) -> Натисніть '2'
     - Сортувач папок (CleanFolder) -> Натисніть '3'
+    - Калькулятор (Calculator)
     - Вийти з помічника -> Натисніть '0'
     """
     )
 
     while True:
-        command = prompt("Введіть номер опції (від 0 до 3): ", completer=Completer, lexer=RainbowLexer()).strip()
+        command = prompt("Введіть номер опції (від 0 до 4): ", completer=Completer, lexer=RainbowLexer()).strip()
 
         if command == "0":
             raise SystemExit("\nДо побачення!\n")
@@ -44,7 +47,7 @@ def assistant_bot():
             print(answer)
 
         else:
-            print("Некоректне число. Будь ласка, введіть число від 0 до 3")
+            print("Некоректне число. Будь ласка, введіть число від 0 до 4")
 
 
 if __name__ == "__main__":
