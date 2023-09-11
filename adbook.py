@@ -106,16 +106,13 @@ class Record:
         self.birthday = birthday
 
     def add_phone(self, phone: Phone):
-        self.phones.append(phone)
+        self.phones.append(phone.value)
 
     def change_phone(self, old_phone, new_phone):
         index = self.phones.index(old_phone)
         self.phones[index] = new_phone
 
-    def remove_phone(self, phone):
-        self.phones.remove(phone)
-
-    def get_next_birthday(self, n: str):
+    def is_birthday_next_days(self, n: int) -> bool:
         if self.birthday.value:
             birthday_date = datetime.strptime(self.birthday.value, "%d.%m.%Y")
             current_date = datetime.now()
@@ -123,9 +120,26 @@ class Record:
             delta_days = birthday_date - current_date
 
             if delta_days.days == (n - 1):
-                return f"Через {n} днів день народження в {self.name.value}"
-            else:
-                return f"Через {n} днів ніхто не святкує день народження"
+                return True
+            return False
+
+    def __repr__(self) -> str:
+        if self.birthday == None:
+            bd = "_"
+        else:
+            bd = self.birthday.value
+
+        if self.email == None:
+            em = "_"
+        else:
+            em = self.email.value
+
+        if self.phones == list():
+            ph = "_"
+        else:
+            ph = self.phones
+
+        return f"phone: {ph}, birthday: {bd}, email: {em}"
 
 
 class AddressBook(UserDict):
@@ -141,13 +155,6 @@ class AddressBook(UserDict):
         with open("addressbook.bin", "rb") as file:
             unpacked = pickle.load(file)
             return unpacked
-
-    def find_user(self, search_str: str):
-        result = []
-        for k, v in self.data.items():
-            if search_str in k or search_str in v.phones[0].value:
-                result.append((k, v.phones[0].value))
-        return result
 
 
 # функція для обробки винятків
@@ -165,7 +172,7 @@ def input_error(func):
             print("Не правильний формат електронної пошти.")
         except BDException:
             print(
-                "Дата народження вказано не правильно, виходить ха межі діапазону 0-150"
+                "Дата народження вказано не правильно, вік виходить за межі діапазону 0-150"
             )
         except ValueError:
             print("Не правильний формат дати народження. Повинен бути дд.мм.рррр")
@@ -184,14 +191,9 @@ def add_handler(user_info: str):
     return f"Користувач{user_info[0]} доданий"
 
 
-def show_handler(*args):  # потрібно доробити
-    return AB
-
-
 @input_error
 def add_number(user_input: str):
-    name = user_input[0]
-    name = name.lstrip()
+    name = user_input[0].lstrip()
     phone = user_input[1]
     rec = AB[name]
     rec.add_phone(Phone(phone))
@@ -200,8 +202,7 @@ def add_number(user_input: str):
 
 @input_error
 def add_email(user_input: str):
-    name = user_input[0]
-    name = name.lstrip()
+    name = user_input[0].lstrip()
     email = user_input[1]
     rec = AB[name]
     rec.add_email(Email(email))
@@ -210,21 +211,142 @@ def add_email(user_input: str):
 
 @input_error
 def add_birthday(user_input: str):
-    name = user_input[0]
-    name = name.lstrip()
-    bd = user_input[1]
-    bd = bd.lstrip()
+    name = user_input[0].lstrip()
+    bd = user_input[1].lstrip()
     rec = AB[name]
     rec.add_bd(Birthday(bd))
     return f"Дата народження {bd} додано до контакту {name}"
 
 
+def hello_handler(*args):
+    return "Привіт! Чим можу допомогти?"
+
+
+@input_error
+def ch_phone(user_input: str):
+    name = user_input[0].lstrip()
+    old_phone = Phone(user_input[1].lstrip())
+    new_phone = Phone(user_input[2].lstrip())
+    rec = AB[name]
+    if old_phone.value in rec.phones:
+        rec.change_phone(old_phone.value, new_phone.value)
+        return f"Номер телефону користувача {name} змінено на {new_phone.value}"
+    return f"Номер телефону {old_phone.value} не знайдено!"
+
+
+@input_error
+def change_email(user_input: str):
+    name = user_input[0].lstrip()
+    email = user_input[1]
+    rec = AB[name]
+    rec.add_email(Email(email))
+    return f"Електронну пошту контакту {name} змінено на {email} "
+
+
+@input_error
+def change_birthday(user_input: str):
+    name = user_input[0].lstrip()
+    bd = user_input[1].lstrip()
+    rec = AB[name]
+    rec.add_bd(Birthday(bd))
+    return f"День народження контакту {name} змінено на {bd} "
+
+
+@input_error
+def del_contact(user_input: str):
+    name = user_input[0].lstrip()
+    AB.pop(name)
+    return f"Контакт {name} видалено"
+
+
+def show_all(*args):
+    for k, v in AB.items():
+        print(f"{k}: {v}")
+    return ""
+
+
+@input_error
+def del_phone(user_input: str):
+    name = user_input[0].lstrip()
+    phone = Phone(user_input[1].lstrip())
+    rec = AB[name]
+    if phone.value in rec.phones:
+        rec.phones.remove(phone.value)
+        # print(rec.phones)
+        return f"Номер телефону {phone.value} користувача {name} видалено"
+    return f"Номер телефону {phone.value} не знайдено!"
+
+
+@input_error
+def del_email(user_input: str):
+    name = user_input[0].lstrip()
+    rec = AB[name]
+    rec.add_email(None)
+    return f"Електронну пошту контакту {name} видалено "
+
+
+@input_error
+def del_birthday(user_input: str):
+    name = user_input[0].lstrip()
+    rec = AB[name]
+    rec.add_bd(None)
+    return f" Для контакту {name} дату народження видалено"
+
+
+@input_error
+def save_adbook(*args):
+    AB.save_ab()
+    return f"Книга контактів збережена"
+
+
+@input_error
+def find_name(user_input: str):
+    name = user_input[0].lstrip()
+    for key in AB.keys():
+        if name == key:
+            record = AB[name]
+            return f"{name}: {record}"
+    return f"Контакт {name} відсутній у книзі контактів"
+
+
+def get_birthday(user_input: str):
+    try:
+        n = int(user_input[0])
+    except ValueError:
+        return "введіть число в діапазоні 1 - 354 "
+
+    result = list()
+
+    if n in range(1, 355):
+        for name, record in AB.items():
+            if record.birthday:
+                if record.is_birthday_next_days(n):
+                    result.append(name)
+    else:
+        return f"введіть число в діапазоні 1 - 354 "
+
+    if result:
+        return f"Через {n} днів день народження святкують {result}"
+    return f"Через {n} днів день народження не святкує жоден з контактів"
+
+
 COMMANDS = {
     add_handler: "add contact",
-    show_handler: "show all",
     add_number: "add phone",
     add_email: "add email",
     add_birthday: "add birthday",
+    hello_handler: "hello",
+    ch_phone: "change phone",
+    change_email: "change email",
+    change_birthday: "change birthday",
+    del_contact: "delete contact",
+    show_all: "show all",
+    save_adbook: "save",
+    del_phone: "delete phone",
+    del_email: "delete email",
+    del_birthday: "delete birthday",
+    find_name: "find name",
+    get_birthday: "get birthday",
 }
 
 
@@ -244,8 +366,10 @@ def main():
     while True:
         user_input = input("Введіть команду та необхідну інформацію>>> ")
         if user_input.lower() in ["good bye", "exit", "close"]:
+            AB.save_ab()
             print("Good bye!")
             break
+
         result = command_parser(user_input)
 
         print(result)
