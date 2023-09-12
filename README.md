@@ -29,7 +29,7 @@ pip install -i https://test.pypi.org/simple/ goit-team_project-FriendlyHandbook=
 
 - Книга контактів (PhoneBook)
 - Нотатки (NoteBook)
-- Сортувач папок (CleanFolder)
+- Сортувач папок (SortFolder)
 
   Після цього можуть бути використані наступні команди:
   | Команди | Аргументи | Результат |

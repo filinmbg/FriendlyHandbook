@@ -4,21 +4,20 @@ from prompt_toolkit import prompt
 from prompt_tool import Completer, RainbowLexer
 import sort_folder
 import note_book
-# import phone_book
-
+import adbook
 
 
 def run_folder():
     folder_path = input("Введіть шлях до теки для сортування: ")
     sort_folder.main(Path(folder_path))
-    return ('Сортування завершено успішно')
+    return "Сортування завершено успішно"
 
 
 bot_command_dict = {
-    # "1": phone_book,
+    "1": adbook.main,
     "2": note_book,
     "3": run_folder,
-    "4": calc
+    "4": calc,
 }
 
 
@@ -30,13 +29,17 @@ def assistant_bot():
     - Книга контактів (PhoneBook) -> Натисніть '1'
     - Нотатки (NoteBook) -> Натисніть '2'
     - Сортувач папок (CleanFolder) -> Натисніть '3'
-    - Калькулятор (Calculator)
+    - Калькулятор (Calculator) -> Натисніть '4'
     - Вийти з помічника -> Натисніть '0'
     """
     )
 
     while True:
-        command = prompt("Введіть номер опції (від 0 до 4): ", completer=Completer, lexer=RainbowLexer()).strip()
+        command = prompt(
+            "Введіть номер опції (від 0 до 4): ",
+            completer=Completer,
+            lexer=RainbowLexer(),
+        ).strip()
 
         if command == "0":
             raise SystemExit("\nДо побачення!\n")
