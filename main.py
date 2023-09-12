@@ -15,7 +15,7 @@ def run_folder():
 
 bot_command_dict = {
     "1": adbook.main,
-    "2": note_book,
+    "2": note_book.run_notebook,
     "3": run_folder,
     "4": calc,
 }

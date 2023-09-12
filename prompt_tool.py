@@ -16,7 +16,32 @@ class RainbowLexer(Lexer):
         return get_line
 
 
-Completer = NestedCompleter.from_nested_dict({'hello': None, 'exit': None,
-                                              'close': None, '.': None, 'add': None,
-                                              'change': None, 'edit': None, 'phone': None,
-                                              'show': None, 'all': None})
+Completer = NestedCompleter.from_nested_dict(
+    {
+        "hello": None,
+        "exit": None,
+        "close": None,
+        ".": None,
+        "edit": None,
+        "phone": None,
+        "save": None,
+        "show": None,
+        "all": None,
+        "show all": None,
+        "add": None,
+        "add contact": None,
+        "add phone": None,
+        "add email": None,
+        "add birthday": None,
+        "change": None,
+        "change phone": None,
+        "change email": None,
+        "change birthday": None,
+        "delete contact": None,
+        "delete phone": None,
+        "delete email": None,
+        "delete birthday": None,
+        "find name": None,
+        "get birthday": None,
+    }
+)
