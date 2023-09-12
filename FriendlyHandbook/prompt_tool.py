@@ -19,6 +19,7 @@ class RainbowLexer(Lexer):
 Completer = NestedCompleter.from_nested_dict(
     {
         "hello": None,
+        "help": None,
         "exit": None,
         "close": None,
         ".": None,
