@@ -1,6 +1,8 @@
-from collections import UserDict
-import pickle
 import os
+import pickle
+from collections import UserDict
+from FriendlyHandbook.prompt_tool import Completer, RainbowLexer
+from prompt_toolkit import prompt
 
 
 SAVE_FILENAME = "notebook.pkl"  # Ім'я файлу для запису данних
@@ -102,7 +104,12 @@ def run_notebook():
         print("9. Додати теги до нотатки   (add tag)")
         print("0. Вихід з записника        (close)")
 
-        choice = input("Виберіть опцію: ")
+        # choice = input("Виберіть опцію: ")
+        choice = prompt(
+            "Виберіть опцію: ",
+            completer=Completer,
+            lexer=RainbowLexer(),
+        ).strip()
 
         if choice == "1" or choice == "add note":
             name = input("Вкажіть ім'я нотатки: ")
