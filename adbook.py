@@ -230,7 +230,7 @@ def help_handler(*args):
     print('find name, name - Знайти контакт')
     print('exit, close, goodbye	(одна команда на вибір)- Закінчити роботу або повернутися в головне меню')
 
-    return ""
+    return " "
 
 @input_error
 def ch_phone(user_input: str):
