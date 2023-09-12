@@ -137,9 +137,10 @@ class Record:
         if self.phones == list():
             ph = "_"
         else:
-            ph = self.phones
+            ph = str(self.phones)
 
-        return f"phone: {ph}, birthday: {bd}, email: {em}"
+       
+        return "|{:^20}|{:^20}|{:^20}|".format(ph, bd, em)
 
 
 class AddressBook(UserDict):
@@ -167,9 +168,9 @@ def input_error(func):
         except KeyError:
             print("Даний контакт відсутній у книзі контактів!")
         except PhoneException:
-            print("Не правильний формат номеру телефона.")
+            print("Не правильний формат номеру телефона. Очікується - 0961010100 або 380961010100")
         except EmailException:
-            print("Не правильний формат електронної пошти.")
+            print("Не правильний формат електронної пошти. Очікується - test@test.com")
         except BDException:
             print(
                 "Дата народження вказано не правильно, вік виходить за межі діапазону 0-150"
@@ -182,14 +183,12 @@ def input_error(func):
 
 AB = AddressBook()
 
-
 @input_error
 def add_handler(user_info: str):
     name = user_info[0].lstrip()
     rec = Record(Name(name))
     AB.add_record(rec)
     return f"Користувач{user_info[0]} доданий"
-
 
 @input_error
 def add_number(user_input: str):
@@ -199,7 +198,6 @@ def add_number(user_input: str):
     rec.add_phone(Phone(phone))
     return f"Номер {phone} додано до контакту {name}"
 
-
 @input_error
 def add_email(user_input: str):
     name = user_input[0].lstrip()
@@ -207,7 +205,6 @@ def add_email(user_input: str):
     rec = AB[name]
     rec.add_email(Email(email))
     return f"Електронна пошта {email} додано до контакту {name}"
-
 
 @input_error
 def add_birthday(user_input: str):
@@ -217,10 +214,23 @@ def add_birthday(user_input: str):
     rec.add_bd(Birthday(bd))
     return f"Дата народження {bd} додано до контакту {name}"
 
+def help_handler(*args):
+    print('add contact, name - Додати новий контакт до Книги контактів')
+    print('add phone, name, phone - Додати номер телефону до існуючого контакту ')
+    print('add email, name, email - Додати електронну пошту до існуючого контакту')
+    print('add birthday, name, birthday	- Додати  день народження до існуючого контакту')
+    print('change phone, name, old phone, new phone - Змінити номер телефону вказаного контакту')
+    print('change birthday, name, birthday - Змінити день народження вказаного контакту')
+    print("delete contact, name - 	Видалити контакт за вказаним ім’ям з Книги контактів")
+    print('delete phone, name, phone - Видалити номер телефону контакту з Книги контактів')
+    print('delete email, name, email - Видалити електронну пошту контакту з Книги контактів')
+    print('delete birthday, name, birthday - Видалити день народження контакту з Книги контактів')
+    print('get birthday, days - Показати в кого день народження через введену кількість днів')
+    print('show all - Показати всі контакти з Книги контактів')
+    print('find name, name - Знайти контакт')
+    print('exit, close, goodbye	(одна команда на вибір)- Закінчити роботу або повернутися в головне меню')
 
-def hello_handler(*args):
-    return "Привіт! Чим можу допомогти?"
-
+    return " "
 
 @input_error
 def ch_phone(user_input: str):
@@ -233,7 +243,6 @@ def ch_phone(user_input: str):
         return f"Номер телефону користувача {name} змінено на {new_phone.value}"
     return f"Номер телефону {old_phone.value} не знайдено!"
 
-
 @input_error
 def change_email(user_input: str):
     name = user_input[0].lstrip()
@@ -241,7 +250,6 @@ def change_email(user_input: str):
     rec = AB[name]
     rec.add_email(Email(email))
     return f"Електронну пошту контакту {name} змінено на {email} "
-
 
 @input_error
 def change_birthday(user_input: str):
@@ -251,7 +259,6 @@ def change_birthday(user_input: str):
     rec.add_bd(Birthday(bd))
     return f"День народження контакту {name} змінено на {bd} "
 
-
 @input_error
 def del_contact(user_input: str):
     name = user_input[0].lstrip()
@@ -260,10 +267,10 @@ def del_contact(user_input: str):
 
 
 def show_all(*args):
+    print("|{:^20}|{:^20}|{:^20}|{:^20}|".format("Name", "Phone", "Birthday", 'Email'))
     for k, v in AB.items():
-        print(f"{k}: {v}")
+        print("|{:^19}".format(k), v)
     return ""
-
 
 @input_error
 def del_phone(user_input: str):
@@ -335,7 +342,7 @@ COMMANDS = {
     add_number: "add phone",
     add_email: "add email",
     add_birthday: "add birthday",
-    hello_handler: "hello",
+    help_handler: "help",
     ch_phone: "change phone",
     change_email: "change email",
     change_birthday: "change birthday",
@@ -358,13 +365,14 @@ def command_parser(user_input: str):
         if command.lower() == value:
             return key(user_info[1:])
     return (
-        "Не відома команда. Спробуйте ще раз! Команду та основні блоки розділіть комами"
+        "Не відома команда. Спробуйте ще раз! Команду та основні блоки розділіть комами!"
     )
 
 
 def main():
+    print ('Вас вітає книга контактів! Введіть команду чи "help" для допомоги')
     while True:
-        user_input = input("Введіть команду та необхідну інформацію>>> ")
+        user_input = input(">>> ")
         if user_input.lower() in ["good bye", "exit", "close"]:
             AB.save_ab()
             print("Good bye!")
