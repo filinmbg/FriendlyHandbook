@@ -1,7 +1,7 @@
 from collections import UserDict
 import pickle
 import os
-from main import assistant_bot
+
 
 SAVE_FILENAME = "notebook.pkl" # Ім'я файлу для запису данних
 
@@ -205,6 +205,7 @@ def run_notebook():
             note_book.save_to_file()
             print(f"Дані збережено в файлі '{SAVE_FILENAME}'")
             print("До побачення!")
+            from main import assistant_bot
             assistant_bot()
             break
 
