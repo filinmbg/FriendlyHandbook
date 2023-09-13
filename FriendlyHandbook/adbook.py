@@ -119,9 +119,12 @@ class Record:
             birthday_date = datetime.strptime(self.birthday.value, "%d.%m.%Y")
             current_date = datetime.now()
             birthday_date = birthday_date.replace(year=current_date.year)
+            if current_date > birthday_date:
+                birthday_date = birthday_date.replace(year=current_date.year + 1 )
+           
             delta_days = birthday_date - current_date
 
-            if delta_days.days == (n - 1):
+            if 0 <= delta_days.days < n:
                 return True
             return False
 
@@ -150,13 +153,13 @@ class AddressBook(UserDict):
         return self.data
 
     def save_ab(self):
-        with open("addressbook.bin", "wb") as file:
+        with open("addressbook.pkl", "wb") as file:
             pickle.dump(self.data, file)
 
     def open_ab(self):
-        with open("addressbook.bin", "rb") as file:
-            unpacked = pickle.load(file)
-            return unpacked
+        with open("addressbook.pkl", "rb") as file:
+           self.data = pickle.load(file)
+            
 
 
 # функція для обробки винятків
@@ -185,6 +188,10 @@ def input_error(func):
 
 
 AB = AddressBook()
+try: 
+    AB.open_ab()
+except FileNotFoundError:
+    AB = AddressBook()
 
 
 @input_error
