@@ -119,6 +119,9 @@ class Record:
             birthday_date = datetime.strptime(self.birthday.value, "%d.%m.%Y")
             current_date = datetime.now()
             birthday_date = birthday_date.replace(year=current_date.year)
+            if current_date > birthday_date:
+                birthday_date = birthday_date.replace(year=current_date.year + 1 )
+           
             delta_days = birthday_date - current_date
 
             if 0 <= delta_days.days < n:
@@ -189,7 +192,6 @@ try:
     AB.open_ab()
 except FileNotFoundError:
     AB = AddressBook()
-
 
 
 @input_error
