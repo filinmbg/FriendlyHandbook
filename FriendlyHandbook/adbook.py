@@ -359,6 +359,8 @@ def get_birthday(user_input: str):
         n = int(user_input[0])
     except ValueError:
         return "введіть число в діапазоні 1 - 354 "
+    except IndexError:
+        return "Будь ласка, введіть всю необхідну інформацію!"
 
     result = list()
 
