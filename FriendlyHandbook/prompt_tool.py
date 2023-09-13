@@ -44,5 +44,15 @@ Completer = NestedCompleter.from_nested_dict(
         "delete birthday": None,
         "find name": None,
         "get birthday": None,
+        "add note": None,
+        "find note": None,
+        "find by tag": None,
+        "show all notes": None,
+        "change note": None,
+        "change text": None,
+        "change tag": None,
+        "delete note": None,
+        "add tag": None,
+        "close": None,
     }
 )
