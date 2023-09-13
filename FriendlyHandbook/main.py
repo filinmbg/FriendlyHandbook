@@ -1,10 +1,10 @@
+from calculator import calc
+from pathlib import Path
+from prompt_tool import Completer, RainbowLexer
+from prompt_toolkit import prompt
 import adbook
 import note_book
 import sort_folder
-from calculator import calc
-from pathlib import Path
-from FriendlyHandbook.prompt_tool import Completer, RainbowLexer
-from prompt_toolkit import prompt
 
 
 def run_folder():

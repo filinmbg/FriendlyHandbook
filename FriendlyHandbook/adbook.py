@@ -1,9 +1,9 @@
-import pickle
-import re
 from collections import UserDict
 from datetime import datetime
-from FriendlyHandbook.prompt_tool import Completer, RainbowLexer
+from prompt_tool import Completer, RainbowLexer
 from prompt_toolkit import prompt
+import pickle
+import re
 
 
 class PhoneException(Exception):
