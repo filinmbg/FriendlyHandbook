@@ -1,7 +1,7 @@
 from setuptools import setup, find_namespace_packages
 
 setup(
-    name="FriendlyHandbook_v1.0",
+    name="FriendlyHandbook",
     version="0.1",
     description="«FriendlyHandbook» - це корисна програма з інтерфейсом командного рядка, яка містить контактну книгу, нотатки, калькулятор та може аналізувати папки.",
     url="https://github.com/filinmbg/FriendlyHandbook",
