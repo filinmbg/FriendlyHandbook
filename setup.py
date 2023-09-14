@@ -9,5 +9,5 @@ setup(
     author_email="filinmbg@gmail.com",
     license="MIT",
     packages=find_namespace_packages(),
-    entry_points={"console_scripts": ["FH = FriendlyHandbook.main:main"]},
+    entry_points={"console_scripts": ["assistant_bot = FriendlyHandbook.main:main"]},
 )
