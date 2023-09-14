@@ -9,5 +9,5 @@ setup(
     author_email="filinmbg@gmail.com",
     license="MIT",
     packages=find_namespace_packages(),
-    entry_points={'console_scripts': ['helloworld = useful.some_code:hello_world']}
+    entry_points={"console_scripts": ["helloworld = FriendlyHandbook:main"]},
 )
