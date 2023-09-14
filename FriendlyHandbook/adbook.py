@@ -120,8 +120,8 @@ class Record:
             current_date = datetime.now()
             birthday_date = birthday_date.replace(year=current_date.year)
             if current_date > birthday_date:
-                birthday_date = birthday_date.replace(year=current_date.year + 1 )
-           
+                birthday_date = birthday_date.replace(year=current_date.year + 1)
+
             delta_days = birthday_date - current_date
 
             if 0 <= delta_days.days < n:
@@ -158,8 +158,7 @@ class AddressBook(UserDict):
 
     def open_ab(self):
         with open("addressbook.pkl", "rb") as file:
-           self.data = pickle.load(file)
-            
+            self.data = pickle.load(file)
 
 
 # функція для обробки винятків
@@ -168,27 +167,25 @@ def input_error(func):
         try:
             return func(*args)
         except IndexError:
-            print("Будь ласка, введіть всю необхідну інформацію!")
+            return "Будь ласка, введіть всю необхідну інформацію!"
         except KeyError:
-            print("Даний контакт відсутній у книзі контактів!")
+            return "Даний контакт відсутній у книзі контактів!"
         except PhoneException:
-            print(
-                "Не правильний формат номеру телефона. Очікується - 0961010100 або 380961010100"
-            )
+            return "Не правильний формат номеру телефона. Очікується - 0961010100 або 380961010100"
+
         except EmailException:
-            print("Не правильний формат електронної пошти. Очікується - test@test.com")
+            return "Не правильний формат електронної пошти. Очікується - test@test.com"
         except BDException:
-            print(
-                "Дата народження вказано не правильно, вік виходить за межі діапазону 0-150"
-            )
+            return "Дата народження вказано не правильно, вік виходить за межі діапазону 0-150"
+
         except ValueError:
-            print("Не правильний формат дати народження. Повинен бути дд.мм.рррр")
+            return "Не правильний формат дати народження. Повинен бути дд.мм.рррр"
 
     return inner
 
 
 AB = AddressBook()
-try: 
+try:
     AB.open_ab()
 except FileNotFoundError:
     AB = AddressBook()
@@ -364,13 +361,13 @@ def get_birthday(user_input: str):
 
     result = list()
 
-    if n in range(1, 355):
+    if n in range(1, 365):
         for name, record in AB.items():
             if record.birthday:
                 if record.is_birthday_next_days(n):
                     result.append(name)
     else:
-        return f"введіть число в діапазоні 1 - 354 "
+        return f"введіть число в діапазоні 1 - 364 "
 
     if result:
         return f"Через {n} днів день народження святкують {result}"
